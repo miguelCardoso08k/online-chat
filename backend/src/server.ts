@@ -8,7 +8,10 @@ import {
 } from "fastify-type-provider-zod";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
-import { routes } from "./routes";
+import { userRoutes } from "./routes/user";
+import fastifyJwt from "@fastify/jwt";
+import auth from "./plugins/auth";
+import { conversationRoutes } from "./routes/conversation";
 
 const server = Fastify({
   // logger: true,
@@ -17,11 +20,23 @@ const server = Fastify({
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
+server.register(fastifyJwt, { secret: "teste" });
 server.register(fastifyCors, { origin: "*" });
+server.register(auth);
 
 server.register(fastifySwagger, {
   openapi: {
     info: { title: "online chat backend", version: "1.0.0" },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [{ bearerAuth: [] }],
   },
   transform: jsonSchemaTransform,
 });
@@ -33,10 +48,12 @@ server.register(fastifySwaggerUi, {
   },
 });
 
-server.register(routes);
+server.register(userRoutes);
+server.register(conversationRoutes);
 
 try {
   server.listen({ port: 3333 });
 } catch (e) {
   console.log(e);
 }
+//"@Jq78952"
