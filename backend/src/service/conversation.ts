@@ -40,7 +40,42 @@ export const ConversationServices = {
   },
 
   async getAll(userId: string) {
-    return await ConversationRepository.findByUserId(userId);
+    const conversations = await ConversationRepository.findByUserId(userId);
+
+    if (!conversations) return null;
+
+    return await Promise.all(
+      conversations.map(async (conversation) => {
+        const participants = await ParticipantServices.getAll(conversation.id);
+        const participantsFiltered = participants.filter((participant) => {
+          const { id, role, joinedAt } = participant;
+          if (participant.userId !== userId) {
+            return {
+              id,
+              userId: participant.userId,
+              role,
+              joinedAt,
+            };
+          }
+        });
+
+        return {
+          id: conversation.id,
+          title: conversation.title,
+          isGroup: conversation.isGroup,
+          createdAt: formatDate(conversation.createdAt),
+          participants: participantsFiltered.map((participant) => {
+            const { id, joinedAt, role, userId } = participant;
+            return {
+              id,
+              userId,
+              role,
+              joinedAt: formatDate(joinedAt),
+            };
+          }),
+        };
+      })
+    );
   },
 
   async getById(id: string) {

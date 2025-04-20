@@ -2,11 +2,12 @@ import z from "zod";
 import { FastifyTypedInstance } from "../types";
 import { jwtRegex } from "../utils/formtDate";
 import {
+  ConversationArrayResponse,
   ConversationCreateSchema,
   ConversationResponseSchema,
 } from "../schemas/conversation";
 import { ParticipantArrayResponse } from "../schemas/participant";
-import { conversationController } from "../controller/conversation";
+import { ConversationController } from "../controller/conversation";
 
 export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
   fastify.post(
@@ -39,7 +40,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
         },
       },
     },
-    conversationController.create
+    ConversationController.create
   );
 
   fastify.get(
@@ -60,10 +61,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
         response: {
           200: z.object({
             message: z.literal("found conversations"),
-            conversation: z.object({
-              info: ConversationResponseSchema,
-              participants: ParticipantArrayResponse,
-            }),
+            conversations: ConversationArrayResponse,
           }),
           400: z.object({ message: z.literal("email or password invalid") }),
           401: z.object({ message: z.literal("Unauthorized") }),
@@ -71,7 +69,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
         },
       },
     },
-    () => {}
+    ConversationController.getAll
   );
 
   fastify.get(

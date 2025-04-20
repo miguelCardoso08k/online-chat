@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ParticipantArrayResponse } from "./participant";
 
 export const RoleEnumSchema = z.enum(["OWNER", "ADMIN", "USER"]).optional();
 
@@ -20,7 +21,15 @@ export const ConversationResponseSchema = z.object({
   createdAt: z.string().date(),
 });
 
-export const ConversationArrayResponse = z.array(ConversationResponseSchema);
+export const ConversationArrayResponse = z.array(
+  z.object({
+    id: z.string().cuid(),
+    title: z.string().nullable(),
+    isGroup: z.boolean(),
+    createdAt: z.string().date(),
+    participants: ParticipantArrayResponse,
+  })
+);
 
 export type RoleENum = z.infer<typeof RoleEnumSchema>;
 export type ConversationCreateInput = z.infer<typeof ConversationCreateSchema>;

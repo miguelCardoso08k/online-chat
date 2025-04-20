@@ -15,7 +15,7 @@ export const ConversationRepository: ConversationRepositoryPrisma = {
 
   async findByUserId(userId) {
     return await prisma.conversation.findMany({
-      where: { participants: { every: { userId } } },
+      where: { participants: { some: { userId } } },
     });
   },
 
