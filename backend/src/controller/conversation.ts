@@ -31,7 +31,17 @@ export const ConversationController = {
       .send({ message: "found conversations", conversations });
   },
 
-  async getById(req: FastifyRequest, reply: FastifyReply) {},
+  async getById(req: FastifyRequest, reply: FastifyReply) {
+    const { id } = req.params as { id: string };
+
+    const conversation = await ConversationServices.getById(id);
+
+    if (!conversation) return reply.code(500).send("erro");
+
+    return reply
+      .code(200)
+      .send({ message: "conversation found", conversation });
+  },
 
   async updateTitle(req: FastifyRequest, reply: FastifyReply) {},
 

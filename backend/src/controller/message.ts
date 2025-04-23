@@ -17,6 +17,17 @@ export const MessageController = {
     return reply.code(201).send({ message: "message created", info: message });
   },
 
+  async update(req: FastifyRequest, reply: FastifyReply) {
+    const { id } = req.params as { id: string };
+    const { content } = req.body as { content: string };
+
+    const message = await MessageServices.update(id, content, req.user.id);
+
+    if (!message) return reply.code(500).send("Erro");
+
+    return reply.code(200).send({ message: "message updated", info: message });
+  },
+
   async delete(req: FastifyRequest, reply: FastifyReply) {
     const { id } = req.params as { id: string };
 

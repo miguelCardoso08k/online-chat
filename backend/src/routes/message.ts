@@ -63,7 +63,7 @@ export const messageRoutes = async (fastify: FastifyTypedInstance) => {
         },
       },
     },
-    () => {}
+    MessageController.update
   );
 
   fastify.delete(

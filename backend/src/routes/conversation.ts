@@ -79,7 +79,8 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
       schema: {
         tags: ["Conversation", "Group"],
         summary: "Get a conversation",
-        description: "User get information of conversation, like messages he participate in",
+        description:
+          "User get information of conversation, like messages he participate in",
         security: [{ bearerAuth: [] }],
         params: z.object({ id: z.string().cuid() }),
         headers: z.object({
@@ -90,10 +91,31 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
         }),
         response: {
           200: z.object({
-            message: z.literal("found conversations"),
+            message: z.literal("conversation found"),
             conversation: z.object({
-              info: ConversationResponseSchema,
-              participants: ParticipantArrayResponse,
+              id: z.string().cuid(),
+              title: z.string().nullable(),
+              isGroup: z.boolean(),
+              createdAt: z.string().date(),
+              participants: z.array(
+                z.object({
+                  id: z.string().cuid(),
+                  userId: z.string().cuid(),
+                  name: z.string(),
+                  avatarUrl: z.string().nullable(),
+                  role: z.string(),
+                  joinedAt: z.string().date(),
+                  messages: z.array(
+                    z.object({
+                      id: z.string().cuid(),
+                      content: z.string().nullable(),
+                      mediaUrl: z.string().nullable(),
+                      createdAt: z.date(),
+                      updatedAt: z.date(),
+                    })
+                  ),
+                })
+              ),
             }),
           }),
           400: z.object({ message: z.literal("email or password invalid") }),
@@ -102,7 +124,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
         },
       },
     },
-    () => {}
+    ConversationController.getById
   );
 
   fastify.patch(

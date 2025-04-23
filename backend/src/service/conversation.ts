@@ -1,11 +1,13 @@
 import { CreateConversationInput } from "../interfaces/conversation";
 import { ConversationRepository } from "../repository/conversation";
-import { RoleENum } from "../schemas/conversation";
+import { RoleEnum } from "../schemas/conversation";
 import { formatDate } from "../utils/formtDate";
+import { MessageServices } from "./message";
 import { ParticipantServices } from "./participant";
+import { UserServices } from "./user";
 interface User {
   id: string;
-  role?: RoleENum;
+  role?: RoleEnum;
 }
 
 interface DataCreate {
@@ -79,7 +81,36 @@ export const ConversationServices = {
   },
 
   async getById(id: string) {
-    return await ConversationRepository.findById(id);
+    const conversation = await ConversationRepository.findById(id);
+
+    if (!conversation) return null;
+    const { isGroup, createdAt, title } = conversation;
+    const participants = await ParticipantServices.getAll(id);
+    const messages = await MessageServices.getByConversation(id);
+
+    return {
+      id,
+      title,
+      isGroup,
+      createdAt: formatDate(createdAt),
+      participants: await Promise.all(
+        participants.map(async (participant) => {
+          const user = await UserServices.getById(participant.userId);
+          if (!user) return null;
+          return {
+            id: participant.id,
+            userId: user.id,
+            name: user.name,
+            avatarUrl: user.avatarUrl,
+            role: participant.role,
+            joinedAt: formatDate(participant.joinedAt),
+            messages: messages.filter(
+              (message) => message.senderId === user.id
+            ),
+          };
+        })
+      ),
+    };
   },
 
   async updateTitle(id: string, title: string) {

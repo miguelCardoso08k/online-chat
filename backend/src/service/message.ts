@@ -22,14 +22,16 @@ export const MessageServices = {
     return await MessageRepository.getById(id);
   },
 
-  async update(id: string, value: string) {
+  async update(id: string, content: string, userId: string) {
     const message = await this.getById(id);
 
     if (!message) return null;
 
     if (message.type !== "TEXT") return null;
 
-    return await MessageRepository.update(id, value);
+    if (message.senderId !== userId) return null;
+
+    return await MessageRepository.update(id, content);
   },
 
   async delete(id: string) {

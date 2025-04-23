@@ -1,6 +1,6 @@
 import { CreateParticipantInput } from "../interfaces/participant";
 import { PartipantRepository } from "../repository/participant";
-import { RoleENum } from "../schemas/conversation";
+import { RoleEnum } from "../schemas/conversation";
 import { formatDate } from "../utils/formtDate";
 
 export const ParticipantServices = {
@@ -30,7 +30,7 @@ export const ParticipantServices = {
     return await PartipantRepository.findById(id);
   },
 
-  async updateTitle(id: string, role: RoleENum) {
+  async updateTitle(id: string, role: RoleEnum) {
     return await PartipantRepository.updateRole(id, role);
   },
 
