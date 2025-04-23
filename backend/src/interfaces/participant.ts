@@ -1,4 +1,4 @@
-import { RoleENum } from "../schemas/conversation";
+import { RoleEnum } from "../schemas/conversation";
 
 export interface Participant {
   id: string;
@@ -11,14 +11,13 @@ export interface Participant {
 export interface CreateParticipantInput {
   userId: string;
   conversationId: string;
-  role?: RoleENum;
+  role?: RoleEnum;
 }
 
 export interface ParticipantRepositoryPrisma {
-  // create(data: CreateParticipantInput[]): Promise<{ count: number}>;
   create(data: CreateParticipantInput): Promise<Participant>;
   findAll(conversationId: string): Promise<Participant[]>;
   findById(id: string): Promise<Participant | null>;
-  updateRole(id: string, role: RoleENum): Promise<Participant | null>;
+  updateRole(id: string, role: RoleEnum): Promise<Participant | null>;
   delete(id: string): Promise<Participant | null>;
 }

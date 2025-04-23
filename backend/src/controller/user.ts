@@ -50,7 +50,6 @@ export const UserController = {
 
     if (!user) return reply.code(500).send("erro");
 
-    console.log(user);
     return reply.code(200).send({ user });
   },
 

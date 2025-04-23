@@ -12,6 +12,7 @@ import { userRoutes } from "./routes/user";
 import fastifyJwt from "@fastify/jwt";
 import auth from "./plugins/auth";
 import { conversationRoutes } from "./routes/conversation";
+import { messageRoutes } from "./routes/message";
 
 const server = Fastify({
   // logger: true,
@@ -50,6 +51,7 @@ server.register(fastifySwaggerUi, {
 
 server.register(userRoutes);
 server.register(conversationRoutes);
+server.register(messageRoutes);
 
 try {
   server.listen({ port: 3333 });

@@ -79,7 +79,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
       schema: {
         tags: ["Conversation", "Group"],
         summary: "Get a conversation",
-        description: "User get information of conversation he participate in",
+        description: "User get information of conversation, like messages he participate in",
         security: [{ bearerAuth: [] }],
         params: z.object({ id: z.string().cuid() }),
         headers: z.object({

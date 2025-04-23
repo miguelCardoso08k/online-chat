@@ -31,6 +31,6 @@ export const ConversationArrayResponse = z.array(
   })
 );
 
-export type RoleENum = z.infer<typeof RoleEnumSchema>;
+export type RoleEnum = z.infer<typeof RoleEnumSchema>;
 export type ConversationCreateInput = z.infer<typeof ConversationCreateSchema>;
 export type ConversationResponse = z.infer<typeof ConversationResponseSchema>;
