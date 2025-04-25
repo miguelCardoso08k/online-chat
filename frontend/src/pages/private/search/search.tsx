@@ -1,10 +1,10 @@
 import { Link } from "react-router";
 
-export default function Profile() {
+export default function Search() {
   return (
-    <div>
+    <>
       <Link to="/">Home</Link>
-      <h1>Profile page</h1>
-    </div>
+      <h1>Search page</h1>
+    </>
   );
 }
