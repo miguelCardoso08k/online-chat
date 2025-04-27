@@ -29,10 +29,7 @@ export default function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp"
-                  alt="user"
-                />
+                <AvatarImage src="https://github.com/shadcn.png" alt="user" />
 
                 <AvatarFallback className="rounded-lg">TS</AvatarFallback>
               </Avatar>

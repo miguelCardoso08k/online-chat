@@ -9,7 +9,8 @@ export default function DirectChat() {
         <SidebarMenuButton
           asChild
           isActive
-          className="!bg-purple-600 hover:!bg-purple-700 !text-white"
+          className="!bg-chart-4"
+          tooltip="Mensagens diretas"
         >
           <Link to="/chat" className="flex items-center gap-2">
             <MessageCircle />
