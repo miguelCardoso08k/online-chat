@@ -2,4 +2,3 @@
 generated/prisma/
 
 .env
-test.js

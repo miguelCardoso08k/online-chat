@@ -11,7 +11,7 @@ import { ConversationController } from "../controller/conversation";
 
 export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
   fastify.post(
-    "/conversations",
+    "/conversation",
     {
       preHandler: [fastify.authenticate],
       schema: {
@@ -44,7 +44,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
   );
 
   fastify.get(
-    "/conversations",
+    "/conversation",
     {
       preHandler: [fastify.authenticate],
       schema: {
@@ -73,7 +73,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
   );
 
   fastify.get(
-    "/conversations/:id",
+    "/conversation/:id",
     {
       preHandler: [fastify.authenticate],
       schema: {
@@ -128,7 +128,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
   );
 
   fastify.patch(
-    "/conversations/title/:id",
+    "/conversation/title/:id",
     {
       preHandler: [fastify.authenticate],
       schema: {
@@ -158,7 +158,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
   );
 
   fastify.delete(
-    "/conversations/:id",
+    "/conversation/:id",
     {
       preHandler: [fastify.authenticate],
       schema: {

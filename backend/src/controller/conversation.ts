@@ -33,10 +33,11 @@ export const ConversationController = {
 
   async getById(req: FastifyRequest, reply: FastifyReply) {
     const { id } = req.params as { id: string };
-
+    console.log("cheguei");
     const conversation = await ConversationServices.getById(id);
 
     if (!conversation) return reply.code(500).send("erro");
+    console.log(conversation);
 
     return reply
       .code(200)
