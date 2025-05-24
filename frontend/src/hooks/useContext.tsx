@@ -1,5 +1,7 @@
 import { AuthLayoutContext } from "@/context/AuthLayout";
+import { ConversationContext } from "@/context/Conversation";
 import { MainLayoutContext } from "@/context/MainLayout";
+import { UserContext } from "@/context/User";
 import { useContext } from "react";
 
 export const useAuthLayout = () => {
@@ -15,6 +17,26 @@ export const useMainLayout = () => {
 
   if (!context)
     throw new Error("useMainLayout must be used within a MainLayoutProvider");
+
+  return context;
+};
+
+export const useConversationContext = () => {
+  const context = useContext(ConversationContext);
+
+  if (!context)
+    throw new Error(
+      "useConversationContext must be used within a MainLayoutProvider"
+    );
+
+  return context;
+};
+
+export const useUserContext = () => {
+  const context = useContext(UserContext);
+
+  if (!context)
+    throw new Error("useUserContext must be used within a MainLayoutProvider");
 
   return context;
 };

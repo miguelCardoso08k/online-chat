@@ -12,8 +12,11 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Link } from "react-router";
+import { useState } from "react";
+import { User } from "@/api/api";
 
 export default function RegisterForm() {
+  const [error, setError] = useState<string>();
   const form = useForm<UserRegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -24,8 +27,10 @@ export default function RegisterForm() {
     },
   });
 
-  const onSubmit = (data: UserRegisterInput) => {
-    console.log(data);
+  const onSubmit = async (data: UserRegisterInput) => {
+    setError("");
+    const res = await User.post(data);
+    console.log(res);
   };
 
   return (
@@ -98,6 +103,7 @@ export default function RegisterForm() {
           >
             Cadastrar
           </Button>
+          {error && <p className="text-red-500">{error}</p>}
         </form>
       </Form>
 

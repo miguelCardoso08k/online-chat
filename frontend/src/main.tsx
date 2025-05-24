@@ -5,15 +5,23 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router";
 import { AuthLayoutProvider } from "./providers/Auth.tsx";
 import MainLayoutProvider from "./providers/Main.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import UserProvider from "./providers/User.tsx";
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthLayoutProvider>
-        <MainLayoutProvider>
-          <App />
-        </MainLayoutProvider>
-      </AuthLayoutProvider>
+      <QueryClientProvider client={queryClient}>
+        <UserProvider>
+          <AuthLayoutProvider>
+            <MainLayoutProvider>
+              <App />
+            </MainLayoutProvider>
+          </AuthLayoutProvider>
+        </UserProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>
 );

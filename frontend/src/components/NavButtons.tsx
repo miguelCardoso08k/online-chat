@@ -5,9 +5,9 @@ export default function NavButtons() {
   return (
     <>
       <SidebarMenuItem>
-        <SidebarMenuButton isActive tooltip="Criar servidor">
+        <SidebarMenuButton isActive tooltip="Criar conversa">
           <Plus />
-          <span>Criar servidor</span>
+          <span>Criar conversa</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>

@@ -1,4 +1,4 @@
-import { loginSchema, UserLoginInput } from "@/schemas/user";
+import { loginSchema, UserLoginInput, UserLoginResponse } from "@/schemas/user";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -11,9 +11,16 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useState } from "react";
+import { User } from "@/api/api";
+import Cookie from "js-cookie";
+import { useUserContext } from "@/hooks/useContext";
 
 export default function LoginForm() {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string>();
+  const { setUser } = useUserContext();
   const form = useForm<UserLoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -22,8 +29,15 @@ export default function LoginForm() {
     },
   });
 
-  const onSubmit = (data: UserLoginInput) => {
-    console.log(data);
+  const onSubmit = async (data: UserLoginInput) => {
+    setError("");
+    const res = await User.login(data);
+    const { token, user } = res as UserLoginResponse;
+
+    setUser(user);
+    Cookie.set("token", token, { expires: 1, secure: true });
+
+    navigate("/chat");
   };
 
   return (
@@ -68,6 +82,7 @@ export default function LoginForm() {
           >
             Entrar
           </Button>
+          {error && <p className="text-red-500">{error}</p>}
         </form>
       </Form>
 

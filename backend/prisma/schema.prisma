@@ -23,6 +23,13 @@ enum MessageType {
   VIDEO
 }
 
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  BLOCKED
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -31,14 +38,29 @@ model User {
   avatarUrl String?
   createdAt DateTime @default(now())
 
-  participants ConversationParticipant[]
-  messages     Message[]
+  participants     ConversationParticipant[]
+  messages         Message[]
+  sentRequests     Friend[]                  @relation("Requesters")
+  receivedRequests Friend[]                  @relation("Receivers")
+}
+
+model Friend {
+  id          String       @id @default(cuid())
+  requesterId String
+  receiverId  String
+  status      FriendStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  requester User @relation("Requesters", fields: [requesterId], references: [id])
+  receiver  User @relation("Receivers", fields: [receiverId], references: [id])
 }
 
 model Conversation {
   id        String   @id @default(cuid())
   title     String? // título opcional para grupos
   isGroup   Boolean  @default(false)
+  imageUrl  String?
   createdAt DateTime @default(now())
 
   participants ConversationParticipant[]

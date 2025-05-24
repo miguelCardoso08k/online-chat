@@ -1,15 +1,17 @@
 import { Route, Routes } from "react-router";
 import AuthLayout from "./layouts/Auth";
 import Login from "./pages/public/login/login";
-import Home from "./pages/private/home/home";
+import Home from "./pages/private/home/Home";
 import Register from "./pages/public/register/register";
-import Profile from "./pages/private/profile/profile";
-import Chat from "./pages/private/chat/chat";
-import Search from "./pages/private/search/search";
+import Profile from "./pages/private/profile/Profile";
+import Chat from "./pages/private/chat/Chat";
+import Search from "./pages/private/search/Search";
 import MainLayout from "./layouts/Main";
+import CurrentChat from "./pages/private/chat/[id]/CurrentChat";
 
 function App() {
   document.documentElement.classList.add("dark");
+  
   return (
     <Routes>
       <Route path="other">
@@ -18,6 +20,7 @@ function App() {
 
       <Route path="/" element={<MainLayout />}>
         <Route path="chat" element={<Chat />}></Route>
+        <Route path="chat/:id" element={<CurrentChat />}></Route>
 
         <Route path="profile" element={<Profile />}></Route>
 

@@ -1,12 +1,21 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { ConversationCreateInput } from "../schemas/conversation";
+import { ConversationCreateInput, RoleEnum } from "../schemas/conversation";
 import { ConversationServices } from "../service/conversation";
 
 export const ConversationController = {
   async create(req: FastifyRequest, reply: FastifyReply) {
     const { users, isGroup, title } = req.body as ConversationCreateInput;
+    const preparedUser = users.map((user) => {
+      const { id } = user;
+      const role: RoleEnum = id === req.user.id ? "OWNER" : "USER";
+
+      return {
+        ...user,
+        role,
+      };
+    });
     const result = await ConversationServices.create({
-      users,
+      users: preparedUser,
       conversation: { isGroup, title },
     });
 
@@ -33,11 +42,10 @@ export const ConversationController = {
 
   async getById(req: FastifyRequest, reply: FastifyReply) {
     const { id } = req.params as { id: string };
-    console.log("cheguei");
+
     const conversation = await ConversationServices.getById(id);
 
     if (!conversation) return reply.code(500).send("erro");
-    console.log(conversation);
 
     return reply
       .code(200)

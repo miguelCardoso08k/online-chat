@@ -1,12 +1,11 @@
-import { createContext, ReactNode } from "react";
+import { LucideProps } from "lucide-react";
+import { createContext } from "react";
 
 export type MainLayoutType = {
-  icon: string;
-  setIcon: (url: string) => void;
-  title: string;
+  Icon: React.FC<LucideProps>;
+  setIcon: (icon: React.FC<LucideProps>) => void;
+  Title: string;
   setTitle: (title: string) => void;
-  content: ReactNode;
-  setContent: (content: ReactNode) => void;
 };
 
 export const MainLayoutContext = createContext<MainLayoutType | null>(null);

@@ -8,6 +8,7 @@ import {
 } from "../schemas/conversation";
 import { ParticipantArrayResponse } from "../schemas/participant";
 import { ConversationController } from "../controller/conversation";
+import { MessageTypeEnumSchema } from "../schemas/message";
 
 export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
   fastify.post(
@@ -110,6 +111,7 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
                       id: z.string().cuid(),
                       content: z.string().nullable(),
                       mediaUrl: z.string().nullable(),
+                      type: MessageTypeEnumSchema,
                       createdAt: z.date(),
                       updatedAt: z.date(),
                     })

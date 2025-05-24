@@ -1,0 +1,95 @@
+import { Conversation } from "@/api/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  useConversationContext,
+  useMainLayout,
+  useUserContext,
+} from "@/hooks/useContext";
+import { ConversationDetailResponse } from "@/schemas/conversation";
+import { Message } from "@/schemas/message";
+import { useQuery } from "@tanstack/react-query";
+import Cookies from "js-cookie";
+import { SendHorizonal } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { useParams } from "react-router";
+
+export default function CurrentChat() {
+  const jwt = Cookies.get("token");
+  const { user } = useUserContext();
+  const { id } = useParams();
+  const safeId = id!;
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { conversations } = useConversationContext();
+  const { setTitle } = useMainLayout();
+  const currentChat = conversations?.find((chat) => chat.id === safeId);
+  const { data, isLoading } = useQuery({
+    queryKey: ["conversation", safeId],
+    queryFn: () => Conversation.getById(safeId, jwt!),
+  });
+
+  useEffect(() => {
+    if (currentChat && currentChat.title) {
+      setTitle(currentChat.title);
+    }
+  }, [currentChat, setTitle]);
+
+  if (isLoading) return <span>Carregando...</span>;
+
+  if (data) {
+    const { conversation } = data as ConversationDetailResponse;
+    const sortedMessages: Message[] = conversation.participants
+      .flatMap((participant) =>
+        participant.messages.map((message) => ({
+          ...message,
+          sender: participant.userId,
+        }))
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+
+    return (
+      <div className="h-full flex flex-col relative">
+        <main className="flex flex-col gap-2 p-4 justify-end">
+          {sortedMessages.map((message) => {
+            const isCurrentUser = message.sender === user?.id;
+
+            return (
+              <div
+                key={message.id}
+                className={`flex ${
+                  isCurrentUser ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[70%] px-4 py-2 rounded-lg text-sm ${
+                    isCurrentUser
+                      ? "bg-chart-4 text-white rounded-br-none"
+                      : "bg-slate-500  text-white rounded-bl-none"
+                  }`}
+                >
+                  <p>{message.content}</p>
+                  <span className="block text-xs opacity-70 mt-1 text-right">
+                    {new Date(message.createdAt).toLocaleTimeString("pt-BR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </main>
+        <footer className="bg-zinc-950 w-full flex gap-2 p-2 absolute bottom-0">
+          <Input />
+          <Button size="icon">
+            <SendHorizonal />
+          </Button>
+        </footer>
+        <div ref={scrollRef} />
+      </div>
+    );
+  }
+}
