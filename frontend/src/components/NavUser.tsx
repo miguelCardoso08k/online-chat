@@ -15,9 +15,19 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "./ui/sidebar";
+import Cookies from "js-cookie";
+import { User } from "@/api/api";
 
 export default function NavUser() {
   const { isMobile } = useSidebar();
+
+  const handleLogout = async () => {
+    const jwt = Cookies.get("token")!;
+
+    const res = await User.logout(jwt);
+
+    console.log(res);
+  };
 
   return (
     <SidebarMenu>
@@ -69,9 +79,12 @@ export default function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="hover:cursor-pointer hover:!bg-red-500 transition-all ease-in-out delay-100"
+            >
               <LogOut />
-              Log out
+              <span>Sair</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

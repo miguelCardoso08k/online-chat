@@ -57,7 +57,17 @@ export const User = {
     return await response.json();
   },
 
-  async logout() {},
+  async logout(jwt: string) {
+    const response = await fetch(`${rootUrl}logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+
+    return await response.json();
+  },
 
   async get() {},
 
