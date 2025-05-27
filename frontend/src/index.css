@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+@plugin 'tailwind-scrollbar' {
+  nocompatible: true;
+}
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -117,4 +119,9 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+.custom-scroll::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
 }

@@ -29,7 +29,7 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: UserRegisterInput) => {
     setError("");
-    const res = await User.post(data);
+    const res = await User.create(data);
     console.log(res);
   };
 

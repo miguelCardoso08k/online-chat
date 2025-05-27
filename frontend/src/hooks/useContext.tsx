@@ -1,3 +1,4 @@
+import { AlertLogoutContext } from "@/context/AlertLogout";
 import { AuthLayoutContext } from "@/context/AuthLayout";
 import { ConversationContext } from "@/context/Conversation";
 import { MainLayoutContext } from "@/context/MainLayout";
@@ -34,6 +35,15 @@ export const useConversationContext = () => {
 
 export const useUserContext = () => {
   const context = useContext(UserContext);
+
+  if (!context)
+    throw new Error("useUserContext must be used within a MainLayoutProvider");
+
+  return context;
+};
+
+export const useAlertLogout = () => {
+  const context = useContext(AlertLogoutContext);
 
   if (!context)
     throw new Error("useUserContext must be used within a MainLayoutProvider");

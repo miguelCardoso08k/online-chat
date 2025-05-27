@@ -5,8 +5,14 @@ export const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 export const userSchema = z.object({
   id: z.string().cuid(),
   name: z.string(),
+  email: z.string().email(),
   avatarUrl: z.string().nullable(),
   createdAt: z.string().date(),
+});
+
+export const userMeResponseSchema = z.object({
+  user: userSchema,
+  message: z.string(),
 });
 
 export const loginSchema = z.object({
@@ -54,3 +60,4 @@ export type UserLoginInput = z.infer<typeof loginSchema>;
 export type UserLoginResponse = z.infer<typeof loginResponseSchema>;
 export type UserRegisterInput = z.infer<typeof registerSchema>;
 export type UserUpdatePasswordInput = z.infer<typeof updatePasswordSchema>;
+export type UserMeREsponse = z.infer<typeof userMeResponseSchema>;

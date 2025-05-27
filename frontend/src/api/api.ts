@@ -35,7 +35,7 @@ export const Conversation = {
 };
 
 export const User = {
-  async post(data: UserRegisterInput) {
+  async create(data: UserRegisterInput) {
     const { email, name, password } = data;
 
     const response = await fetch(`${rootUrl}user`, {
@@ -61,15 +61,23 @@ export const User = {
     const response = await fetch(`${rootUrl}logout`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+
+    return response;
+  },
+
+  async get(jwt: string) {
+    const response = await fetch(`${rootUrl}user/me`, {
+      method: "GET",
+      headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
 
     return await response.json();
   },
-
-  async get() {},
 
   async updatePassword(data: UserUpdatePasswordInput) {
     const { password, newPassword } = data;

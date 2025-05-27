@@ -1,27 +1,36 @@
 import { Conversation } from "@/api/api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import MessageInput from "@/components/MessageInput";
 import {
   useConversationContext,
   useMainLayout,
   useUserContext,
 } from "@/hooks/useContext";
+import { getSocket } from "@/lib/socket";
 import { ConversationDetailResponse } from "@/schemas/conversation";
 import { Message } from "@/schemas/message";
 import { useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
-import { SendHorizonal } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
 
 export default function CurrentChat() {
   const jwt = Cookies.get("token");
   const { user } = useUserContext();
+  const { conversations } = useConversationContext();
   const { id } = useParams();
+  const { setTitle } = useMainLayout();
   const safeId = id!;
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { conversations } = useConversationContext();
-  const { setTitle } = useMainLayout();
+  const socket = getSocket(jwt!);
+
+  const handleSendMessage = (message: string) => {
+    socket.emit("message", {
+      content: message,
+      type: "TEXT",
+      conversationId: safeId,
+      });
+  };
+
   const currentChat = conversations?.find((chat) => chat.id === safeId);
   const { data, isLoading } = useQuery({
     queryKey: ["conversation", safeId],
@@ -32,7 +41,7 @@ export default function CurrentChat() {
     if (currentChat && currentChat.title) {
       setTitle(currentChat.title);
     }
-  }, [currentChat, setTitle]);
+  }, [currentChat, setTitle, jwt]);
 
   if (isLoading) return <span>Carregando...</span>;
 
@@ -82,11 +91,8 @@ export default function CurrentChat() {
             );
           })}
         </main>
-        <footer className="bg-zinc-950 w-full flex gap-2 p-2 absolute bottom-0">
-          <Input />
-          <Button size="icon">
-            <SendHorizonal />
-          </Button>
+        <footer className=" w-full flex justify-center items-center gap-2 border-t p-2 absolute bottom-0">
+          <MessageInput onSend={handleSendMessage} />
         </footer>
         <div ref={scrollRef} />
       </div>

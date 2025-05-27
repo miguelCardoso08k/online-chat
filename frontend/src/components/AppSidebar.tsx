@@ -7,11 +7,9 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
 } from "./ui/sidebar";
 
 import NavCurrentChat from "./NavCurrentChat";
-
 
 export default function AppSidebar({
   ...props
@@ -30,7 +28,6 @@ export default function AppSidebar({
         <Separator />
         <NavUser />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

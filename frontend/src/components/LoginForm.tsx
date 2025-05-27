@@ -35,6 +35,7 @@ export default function LoginForm() {
     const { token, user } = res as UserLoginResponse;
 
     setUser(user);
+
     Cookie.set("token", token, { expires: 1, secure: true });
 
     navigate("/chat");
@@ -69,7 +70,11 @@ export default function LoginForm() {
               <FormItem>
                 <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="********" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="digite sua senha"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
