@@ -50,7 +50,7 @@ export const UserController = {
 
     if (!user) return reply.code(500).send("erro");
 
-    return reply.code(200).send({ user });
+    return reply.code(200).send({ user, message: "user info" });
   },
 
   async updatePassword(req: FastifyRequest, reply: FastifyReply) {

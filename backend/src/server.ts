@@ -13,6 +13,9 @@ import fastifyJwt from "@fastify/jwt";
 import auth from "./plugins/auth";
 import { conversationRoutes } from "./routes/conversation";
 import { messageRoutes } from "./routes/message";
+import { createServer } from "http";
+import { Server as IOServer } from "socket.io";
+import { RegisterSocketEvents } from "./sockets";
 
 const server = Fastify({
   // logger: true,
@@ -53,9 +56,26 @@ server.register(userRoutes);
 server.register(conversationRoutes);
 server.register(messageRoutes);
 
-try {
-  server.listen({ port: 3333 });
-} catch (e) {
-  console.log(e);
-}
+const io = new IOServer(server.server, {
+  cors: {
+    origin: "*",
+  },
+  pingInterval: 10000,
+});
+
+RegisterSocketEvents(io, server);
+
+const start = async () => {
+  try {
+    await server.ready();
+    server.listen({ port: 3333 }, () => {
+      console.log("Servidor HTTP + Socket.IO rodando em http://localhost:3333");
+    });
+  } catch (err) {
+    server.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();
 //"@Jq78952"

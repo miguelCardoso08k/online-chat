@@ -52,7 +52,7 @@ export const userRoutes = async (fastify: FastifyTypedInstance) => {
     UserController.login
   );
 
-    fastify.post(
+  fastify.post(
     "/logout",
     {
       preHandler: [fastify.authenticate],
@@ -96,6 +96,7 @@ export const userRoutes = async (fastify: FastifyTypedInstance) => {
         response: {
           200: z.object({
             user: UserResponseSchema,
+            message: z.literal("user info"),
           }),
           401: z.object({ message: z.literal("Unauthorized") }),
           500: z.string(),
