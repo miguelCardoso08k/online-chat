@@ -1,3 +1,4 @@
+import { group } from "console";
 import { CreateConversationInput } from "../interfaces/conversation";
 import { ConversationRepository } from "../repository/conversation";
 import { RoleEnum } from "../schemas/conversation";
@@ -76,7 +77,37 @@ export const ConversationServices = {
             };
           }),
         };
-      })
+      }),
+    );
+  },
+
+  async getMyGroups(userId: string) {
+    const myGroups = await ConversationRepository.findMyGroups(userId);
+    return await Promise.all(
+      myGroups.map(async (group) => {
+        const participants = await ParticipantServices.getAll(group.id);
+        const participantsFiltered = participants.filter((participant) => {
+          const { id, role, joinedAt } = participant;
+          if (participant.userId !== userId) {
+            return { id, userId: participant.userId, role, joinedAt };
+          }
+        });
+        return {
+          id: group.id,
+          title: group.title,
+          isGroup: group.isGroup,
+          createdAt: formatDate(group.createdAt),
+          participants: participantsFiltered.map((participant) => {
+            const { id, joinedAt, role, userId } = participant;
+            return {
+              id,
+              userId,
+              role,
+              joinedAt: formatDate(joinedAt),
+            };
+          }),
+        };
+      }),
     );
   },
 
@@ -105,10 +136,10 @@ export const ConversationServices = {
             role: participant.role,
             joinedAt: formatDate(participant.joinedAt),
             messages: messages.filter(
-              (message) => message.senderId === user.id
+              (message) => message.senderId === user.id,
             ),
           };
-        })
+        }),
       ),
     };
   },

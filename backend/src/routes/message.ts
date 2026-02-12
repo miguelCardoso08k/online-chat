@@ -5,7 +5,7 @@ import { MessageInputSchema, MessageResponseSchema } from "../schemas/message";
 import { MessageController } from "../controller/message";
 
 export const messageRoutes = async (fastify: FastifyTypedInstance) => {
-  fastify.post(
+  /*  fastify.post(
     "/message",
     {
       preHandler: [fastify.authenticate],
@@ -26,16 +26,20 @@ export const messageRoutes = async (fastify: FastifyTypedInstance) => {
             message: z.literal("message created"),
             info: MessageResponseSchema,
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    MessageController.create
-  );
+    MessageController.create,
+  );*/
 
-  fastify.patch(
+  /*  fastify.patch(
     "/message/:id",
     {
       preHandler: [fastify.authenticate],
@@ -57,14 +61,18 @@ export const messageRoutes = async (fastify: FastifyTypedInstance) => {
             message: z.literal("message updated"),
             info: MessageResponseSchema,
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    MessageController.update
-  );
+    MessageController.update,
+  ); */
 
   fastify.delete(
     "/message/:id",
@@ -86,12 +94,16 @@ export const messageRoutes = async (fastify: FastifyTypedInstance) => {
             message: z.literal("message deleted"),
             info: MessageResponseSchema,
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    MessageController.delete
+    MessageController.delete,
   );
 };

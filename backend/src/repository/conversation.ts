@@ -13,9 +13,15 @@ export const ConversationRepository: ConversationRepositoryPrisma = {
     });
   },
 
+  async findMyGroups(userId) {
+    return await prisma.conversation.findMany({
+      where: { participants: { some: { userId } }, isGroup: true },
+    });
+  },
+
   async findByUserId(userId) {
     return await prisma.conversation.findMany({
-      where: { participants: { some: { userId } } },
+      where: { participants: { some: { userId } }, isGroup: false },
     });
   },
 

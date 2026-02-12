@@ -24,12 +24,12 @@ export const RegisterSocketEvents = (io: Server, server: FastifyInstance) => {
   io.on("connection", (socket: Socket) => {
     console.log("New client connection:", socket.id);
 
-    socket.on("message", async (data: MessageInput) => {
+    socket.on("send_message", async (data: MessageInput) => {
       console.log(data);
       console.log(socket.user);
       const message = await MessageServices.create(data, socket.user.id);
       console.log(message);
-      io.emit("message", message);
+      io.emit("", message);
     });
   });
 };

@@ -33,11 +33,15 @@ export const ConversationController = {
   async getAll(req: FastifyRequest, reply: FastifyReply) {
     const conversations = await ConversationServices.getAll(req.user.id);
 
-    if (!conversations) return reply.code(500).send("not found");
-
     return reply
       .code(200)
       .send({ message: "found conversations", conversations });
+  },
+
+  async getMyGroups(req: FastifyRequest, reply: FastifyReply) {
+    const myGroups = await ConversationServices.getMyGroups(req.user.id);
+
+    return reply.code(200).send({ message: "found groups", groups: myGroups });
   },
 
   async getById(req: FastifyRequest, reply: FastifyReply) {

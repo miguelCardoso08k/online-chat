@@ -3,25 +3,24 @@ import { UserRepository } from "../repository/user";
 import bcrypt from "bcryptjs";
 import { formatDate } from "../utils/formtDate";
 import { UserLoginInput } from "../schemas/user";
+import { ConflictError } from "../errors/errors";
 
 export const UserServices = {
   async create(data: CreateUserInput) {
     const userExists = await this.getByEmail(data.email);
 
-    if (!userExists) {
-      const password = data.password
-        ? await bcrypt.hash(data.password, 10)
-        : null;
+    if (userExists) throw new ConflictError("Email already registered");
 
-      data.password = password;
+    const password = data.password
+      ? await bcrypt.hash(data.password, 10)
+      : null;
 
-      const user = await UserRepository.create(data);
-      const { createdAt, email, id, name, avatarUrl } = user;
+    data.password = password;
 
-      return { id, name, email, avatarUrl, createdAt: formatDate(createdAt) };
-    }
+    const user = await UserRepository.create(data);
+    const { createdAt, email, id, name, avatarUrl } = user;
 
-    return null;
+    return { id, name, email, avatarUrl, createdAt: formatDate(createdAt) };
   },
 
   async login(data: UserLoginInput) {

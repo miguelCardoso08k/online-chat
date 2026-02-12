@@ -12,6 +12,7 @@ export interface CreateConversationInput {
 
 export interface ConversationRepositoryPrisma {
   create(data: CreateConversationInput): Promise<Conversation | null>;
+  findMyGroups(userId: string): Promise<Conversation[]>;
   findById(id: string): Promise<Conversation | null>;
   findByUserId(userId: string): Promise<Conversation[]>;
   updateTitle(id: string, title: string): Promise<Conversation | null>;

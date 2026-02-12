@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+import Fastify, { FastifyError } from "fastify";
 import fastifyCors from "@fastify/cors";
 import {
   jsonSchemaTransform,
@@ -13,9 +13,10 @@ import fastifyJwt from "@fastify/jwt";
 import auth from "./plugins/auth";
 import { conversationRoutes } from "./routes/conversation";
 import { messageRoutes } from "./routes/message";
-import { createServer } from "http";
 import { Server as IOServer } from "socket.io";
 import { RegisterSocketEvents } from "./sockets";
+import { AppError } from "./errors/appError";
+import { ZodError } from "zod";
 
 const server = Fastify({
   // logger: true,
@@ -64,6 +65,26 @@ const io = new IOServer(server.server, {
 });
 
 RegisterSocketEvents(io, server);
+
+server.setErrorHandler((error, _, reply) => {
+  if ((error as FastifyError).validation) {
+    return reply.status(422).send({
+      message: "Unprocessable entity",
+      errors: (error as FastifyError).validation?.map((err) => ({
+        field: err.instancePath.replace("/", " "),
+        message: err.message,
+      })),
+    });
+  }
+
+  if (error instanceof AppError) {
+    return reply.status(error.statusCode).send({ message: error.message });
+  }
+
+  console.error(error);
+
+  return reply.status(500).send({ message: "Internal server error" });
+});
 
 const start = async () => {
   try {

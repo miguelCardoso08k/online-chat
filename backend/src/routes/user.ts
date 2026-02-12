@@ -23,11 +23,17 @@ export const userRoutes = async (fastify: FastifyTypedInstance) => {
             message: z.literal("user created"),
             user: UserResponseSchema,
           }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    UserController.create
+    UserController.create,
   );
 
   fastify.post(
@@ -44,12 +50,17 @@ export const userRoutes = async (fastify: FastifyTypedInstance) => {
             user: UserResponseSchema,
             token: z.string().jwt(),
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    UserController.login
+    UserController.login,
   );
 
   fastify.post(
@@ -70,13 +81,17 @@ export const userRoutes = async (fastify: FastifyTypedInstance) => {
           200: z.object({
             message: z.literal("user logout"),
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    UserController.logout
+    UserController.logout,
   );
 
   fastify.get(
@@ -98,12 +113,17 @@ export const userRoutes = async (fastify: FastifyTypedInstance) => {
             user: UserResponseSchema,
             message: z.literal("user info"),
           }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    UserController.get
+    UserController.get,
   );
 
   fastify.patch(
@@ -125,12 +145,17 @@ export const userRoutes = async (fastify: FastifyTypedInstance) => {
           200: z.object({
             message: z.literal("password updated"),
           }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    UserController.updatePassword
+    UserController.updatePassword,
   );
 
   fastify.delete(
@@ -151,11 +176,16 @@ export const userRoutes = async (fastify: FastifyTypedInstance) => {
           200: z.object({
             message: z.literal("user deleted"),
           }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    UserController.delete
+    UserController.delete,
   );
 };

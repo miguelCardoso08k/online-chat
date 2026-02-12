@@ -35,13 +35,17 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
               participants: ParticipantArrayResponse,
             }),
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    ConversationController.create
+    ConversationController.create,
   );
 
   fastify.get(
@@ -49,8 +53,8 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
     {
       preHandler: [fastify.authenticate],
       schema: {
-        tags: ["Conversation", "Group"],
-        summary: "Get all conversation",
+        tags: ["Conversation"],
+        summary: "Get your conversations",
         description: "User gets all conversations he participates in",
         security: [{ bearerAuth: [] }],
         headers: z.object({
@@ -64,13 +68,50 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
             message: z.literal("found conversations"),
             conversations: ConversationArrayResponse,
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    ConversationController.getAll
+    ConversationController.getAll,
+  );
+
+  fastify.get(
+    "/conversation/groups/my",
+    {
+      preHandler: [fastify.authenticate],
+      schema: {
+        tags: ["Group"],
+        summary: "Get your gruops",
+        description: "User gets all conversations he participates in",
+        security: [{ bearerAuth: [] }],
+        headers: z.object({
+          authorization: z
+            .string()
+            .regex(jwtRegex)
+            .describe("Authorization header with JWT token"),
+        }),
+        response: {
+          200: z.object({
+            message: z.literal("found groups"),
+            groups: ConversationArrayResponse,
+          }),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
+        },
+      },
+    },
+    ConversationController.getMyGroups,
   );
 
   fastify.get(
@@ -114,19 +155,23 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
                       type: MessageTypeEnumSchema,
                       createdAt: z.date(),
                       updatedAt: z.date(),
-                    })
+                    }),
                   ),
-                })
+                }),
               ),
             }),
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    ConversationController.getById
+    ConversationController.getById,
   );
 
   fastify.patch(
@@ -150,13 +195,17 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
             message: z.literal("updated title"),
             conversation: ConversationResponseSchema,
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    () => {}
+    () => {},
   );
 
   fastify.delete(
@@ -183,12 +232,16 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
               participants: ParticipantArrayResponse,
             }),
           }),
-          400: z.object({ message: z.literal("email or password invalid") }),
-          401: z.object({ message: z.literal("Unauthorized") }),
-          500: z.string(),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
         },
       },
     },
-    () => {}
+    () => {},
   );
 };
