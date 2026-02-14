@@ -13,6 +13,10 @@ export const ConversationRepository: ConversationRepositoryPrisma = {
     });
   },
 
+  async findGroups() {
+    return prisma.conversation.findMany({ where: { isGroup: true } });
+  },
+
   async findMyGroups(userId) {
     return await prisma.conversation.findMany({
       where: { participants: { some: { userId } }, isGroup: true },

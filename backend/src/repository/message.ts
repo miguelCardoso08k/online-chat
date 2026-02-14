@@ -18,6 +18,7 @@ export const MessageRepository: MessageRepositoryPrisma = {
 
   async getByConversationId(conversationId) {
     return await prisma.message.findMany({ where: { conversationId } });
+    
   },
 
   async update(id, content) {

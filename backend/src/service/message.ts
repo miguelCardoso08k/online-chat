@@ -1,3 +1,4 @@
+import { NotFoundError } from "../errors/errors";
 import { MessageRepository } from "../repository/message";
 import { MessageInput } from "../schemas/message";
 
@@ -37,7 +38,7 @@ export const MessageServices = {
   async delete(id: string) {
     const message = await this.getById(id);
 
-    if (!message) return null;
+    if (!message) throw new NotFoundError("Not found message");
 
     return await MessageRepository.delete(id);
   },

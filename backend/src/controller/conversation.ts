@@ -38,6 +38,12 @@ export const ConversationController = {
       .send({ message: "found conversations", conversations });
   },
 
+  async getAllGroups(req: FastifyRequest, reply: FastifyReply) {
+    const groups = await ConversationServices.getAllGroups();
+    
+    return reply.code(200).send({ message: "found groups", groups });
+  },
+
   async getMyGroups(req: FastifyRequest, reply: FastifyReply) {
     const myGroups = await ConversationServices.getMyGroups(req.user.id);
 

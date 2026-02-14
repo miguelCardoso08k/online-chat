@@ -6,11 +6,12 @@ import {
   UserUpdateInput,
 } from "../schemas/user";
 import { addRevokedToken } from "../utils/revokeTokens";
+import { UnauthorizedError } from "../errors/errors";
 
 export const UserController = {
   async create(
     req: FastifyRequest<{ Body: UserCreateInput }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) {
     const user = await UserServices.create(req.body);
 
@@ -21,11 +22,11 @@ export const UserController = {
 
   async login(
     req: FastifyRequest<{ Body: UserLoginInput }>,
-    reply: FastifyReply
+    reply: FastifyReply,
   ) {
     const user = await UserServices.login(req.body);
 
-    if (!user) return reply.code(500).send("Error");
+    if (!user) throw new UnauthorizedError();
 
     const token = req.server.jwt.sign({
       sub: user.id,

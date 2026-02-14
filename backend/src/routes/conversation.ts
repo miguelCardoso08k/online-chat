@@ -8,17 +8,20 @@ import {
 } from "../schemas/conversation";
 import { ParticipantArrayResponse } from "../schemas/participant";
 import { ConversationController } from "../controller/conversation";
-import { MessageTypeEnumSchema } from "../schemas/message";
+import {
+  MessageResponseArraySchema,
+  MessageTypeEnumSchema,
+} from "../schemas/message";
 
 export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
   fastify.post(
-    "/conversation",
+    "/conversation/group",
     {
       preHandler: [fastify.authenticate],
       schema: {
-        tags: ["Conversation", "Group"],
-        summary: "Create a conversation",
-        description: "A authentication user create a new conversation",
+        tags: ["Group"],
+        summary: "Create a new group",
+        description: "return a new group",
         security: [{ bearerAuth: [] }],
         headers: z.object({
           authorization: z
@@ -79,6 +82,39 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
       },
     },
     ConversationController.getAll,
+  );
+
+  fastify.get(
+    "/conversation/groups",
+    {
+      preHandler: [fastify.authenticate],
+      schema: {
+        tags: ["Group"],
+        summary: "Get groups",
+        description: "Return all groups register in app",
+        security: [{ bearerAuth: [] }],
+        headers: z.object({
+          authorization: z
+            .string()
+            .regex(jwtRegex)
+            .describe("Authorization header with JWT token"),
+        }),
+        response: {
+          200: z.object({
+            message: z.literal("found groups"),
+            groups: ConversationArrayResponse,
+          }),
+          400: z.object({ message: z.string() }),
+          401: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
+          404: z.object({ message: z.string() }),
+          409: z.object({ message: z.string() }),
+          422: z.object({ message: z.string() }),
+          500: z.object({ message: z.string() }),
+        },
+      },
+    },
+    ConversationController.getAllGroups,
   );
 
   fastify.get(
@@ -147,18 +183,9 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
                   avatarUrl: z.string().nullable(),
                   role: z.string(),
                   joinedAt: z.string().date(),
-                  messages: z.array(
-                    z.object({
-                      id: z.string().cuid(),
-                      content: z.string().nullable(),
-                      mediaUrl: z.string().nullable(),
-                      type: MessageTypeEnumSchema,
-                      createdAt: z.date(),
-                      updatedAt: z.date(),
-                    }),
-                  ),
                 }),
               ),
+              messages: MessageResponseArraySchema,
             }),
           }),
           400: z.object({ message: z.string() }),
@@ -179,9 +206,9 @@ export const conversationRoutes = async (fastify: FastifyTypedInstance) => {
     {
       preHandler: [fastify.authenticate],
       schema: {
-        tags: ["Group"],
-        summary: "Update title the group",
-        description: "User update title of group conversation",
+        tags: ["Group", "Conversation"],
+        summary: "Update title the conversation",
+        description: "User update title of group or 1-1 conversation",
         security: [{ bearerAuth: [] }],
         params: z.object({ id: z.string().cuid() }),
         headers: z.object({

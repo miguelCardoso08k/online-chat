@@ -7,14 +7,10 @@ import { MessageInput } from "../schemas/message";
 export const RegisterSocketEvents = (io: Server, server: FastifyInstance) => {
   io.use((socket, next) => {
     const token = socket.handshake.auth.token;
+
     try {
       if (isTokenRevoked(token)) new Error("revoked token");
 
-      const payload: { sub: string; email: string; iat: number } =
-        server.jwt.verify(token);
-
-      socket.data = payload;
-      socket.user = { id: payload.sub, email: payload.email };
       next();
     } catch (err) {
       next(new Error("Authentication error"));
@@ -23,13 +19,26 @@ export const RegisterSocketEvents = (io: Server, server: FastifyInstance) => {
 
   io.on("connection", (socket: Socket) => {
     console.log("New client connection:", socket.id);
+    const userId = socket.handshake.auth.userId;
+    socket.join(`user-${userId}`);
 
     socket.on("send_message", async (data: MessageInput) => {
-      console.log(data);
-      console.log(socket.user);
-      const message = await MessageServices.create(data, socket.user.id);
-      console.log(message);
-      io.emit("", message);
+      const message = await MessageServices.create(data, userId);
+
+      io.emit("received_message", message);
+    });
+
+    socket.on("disconnect", () => {
+      console.log(`${socket.id} foi desconectado`);
     });
   });
 };
+/*
+send_message *
+received_message *
+readed_message
+deleted_message *
+typing_message
+online_user
+ofline_user
+*/

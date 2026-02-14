@@ -81,6 +81,33 @@ export const ConversationServices = {
     );
   },
 
+  async getAllGroups() {
+    const groups = await ConversationRepository.findGroups();
+
+    return await Promise.all(
+      groups.map(async (group) => {
+        const participants = await ParticipantServices.getAll(group.id);
+
+        return {
+          id: group.id,
+          title: group.title,
+          isGroup: group.isGroup,
+          createdAt: formatDate(group.createdAt),
+          participants: participants.map((participant) => {
+            const { id, role, joinedAt, userId } = participant;
+
+            return {
+              id,
+              userId,
+              role,
+              joinedAt: formatDate(joinedAt),
+            };
+          }),
+        };
+      }),
+    );
+  },
+
   async getMyGroups(userId: string) {
     const myGroups = await ConversationRepository.findMyGroups(userId);
     return await Promise.all(
@@ -118,6 +145,7 @@ export const ConversationServices = {
     const { isGroup, createdAt, title } = conversation;
     const participants = await ParticipantServices.getAll(id);
     const messages = await MessageServices.getByConversation(id);
+    console.log(messages);
 
     return {
       id,
@@ -135,12 +163,10 @@ export const ConversationServices = {
             avatarUrl: user.avatarUrl,
             role: participant.role,
             joinedAt: formatDate(participant.joinedAt),
-            messages: messages.filter(
-              (message) => message.senderId === user.id,
-            ),
           };
         }),
       ),
+      messages,
     };
   },
 
