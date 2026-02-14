@@ -35,7 +35,7 @@ export default function MainLayout() {
   });
 
   if (token) {
-    const socket = getSocket(token);
+    const socket = getSocket();
     socket.connect();
   }
 
@@ -47,7 +47,7 @@ export default function MainLayout() {
             <AppSidebar />
             <SidebarInset>
               <Header />
-              <main className="bg-zinc-800 h-full">
+              <main className="flex-1 min-h-0 bg-zinc-800">
                 <Outlet />
                 <AlertLogout />
               </main>

@@ -17,9 +17,9 @@ export const ConversationDetailSchema = z.object({
       avatarUrl: z.string().nullable(),
       role: RoleSchema,
       joinedAt: z.string().date(),
-      messages: z.array(MessageSchema),
-    })
+    }),
   ),
+  messages: z.array(MessageSchema),
 });
 
 export const ConversationDetailResponseSchema = z.object({
@@ -41,7 +41,7 @@ export const ConversationSchema = z.object({
       avatarUrl: z.string().nullable(),
       role: RoleSchema,
       joinedAt: z.string().date(),
-    })
+    }),
   ),
 });
 

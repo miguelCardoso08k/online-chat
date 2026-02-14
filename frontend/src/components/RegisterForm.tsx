@@ -1,6 +1,11 @@
-import { registerSchema, UserRegisterInput } from "@/schemas/user";
+import {
+  registerSchema,
+  UserLoginResponse,
+  UserRegisterInput,
+} from "@/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useUserContext } from "@/hooks/useContext";
 import {
   Form,
   FormControl,
@@ -11,11 +16,14 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Link } from "react-router";
 import { useState } from "react";
 import { User } from "@/api/api";
+import Cookie from "js-cookie";
+import { Link, useNavigate } from "react-router";
 
 export default function RegisterForm() {
+  const navigate = useNavigate();
+  const { setUser } = useUserContext();
   const [error, setError] = useState<string>();
   const form = useForm<UserRegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -31,6 +39,13 @@ export default function RegisterForm() {
     setError("");
     const res = await User.create(data);
     console.log(res);
+    const { token, user } = res as UserLoginResponse;
+
+    setUser(user);
+
+    Cookie.set("token", token, { expires: 1, secure: true });
+
+    navigate("/home");
   };
 
   return (

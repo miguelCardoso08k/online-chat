@@ -1,69 +1,75 @@
 import { Conversation } from "@/api/api";
 import MessageInput from "@/components/MessageInput";
-import {
-  useConversationContext,
-  useMainLayout,
-  useUserContext,
-} from "@/hooks/useContext";
+import { useMainLayout, useUserContext } from "@/hooks/useContext";
 import { getSocket } from "@/lib/socket";
 import { ConversationDetailResponse } from "@/schemas/conversation";
 import { Message } from "@/schemas/message";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
 
 export default function CurrentChat() {
   const jwt = Cookies.get("token");
+  const queryClient = useQueryClient();
   const { user } = useUserContext();
-  const { conversations } = useConversationContext();
   const { id } = useParams();
   const { setTitle } = useMainLayout();
   const safeId = id!;
   const scrollRef = useRef<HTMLDivElement>(null);
-  const socket = getSocket(jwt!);
+  const socket = getSocket();
 
   const handleSendMessage = (message: string) => {
-    socket.emit("message", {
+    socket.emit("send_message", {
       content: message,
       type: "TEXT",
       conversationId: safeId,
-      });
+    });
   };
 
-  const currentChat = conversations?.find((chat) => chat.id === safeId);
   const { data, isLoading } = useQuery({
     queryKey: ["conversation", safeId],
     queryFn: () => Conversation.getById(safeId, jwt!),
   });
 
   useEffect(() => {
-    if (currentChat && currentChat.title) {
-      setTitle(currentChat.title);
-    }
-  }, [currentChat, setTitle, jwt]);
+    socket.on("received_message", (newMessage: Message) => {
+      console.log("here");
+      console.log(newMessage);
+      queryClient.setQueryData<ConversationDetailResponse>(
+        ["conversation", safeId],
+        (oldData) => {
+          if (!oldData) return oldData;
+          const alreadyExists = oldData.conversation.messages.some(
+            (message) => message.id === newMessage.id,
+          );
+
+          if (alreadyExists) return oldData;
+
+          return {
+            ...oldData,
+            conversation: {
+              ...oldData.conversation,
+              messages: [...oldData.conversation.messages, newMessage],
+            },
+          };
+        },
+      );
+    });
+  }, [jwt, socket, queryClient, safeId]);
 
   if (isLoading) return <span>Carregando...</span>;
 
   if (data) {
     const { conversation } = data as ConversationDetailResponse;
-    const sortedMessages: Message[] = conversation.participants
-      .flatMap((participant) =>
-        participant.messages.map((message) => ({
-          ...message,
-          sender: participant.userId,
-        }))
-      )
-      .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
+    setTitle(conversation.title || "chat");
+    const messages: Message[] = conversation.messages;
 
     return (
-      <div className="h-full flex flex-col relative">
-        <main className="flex flex-col gap-2 p-4 justify-end">
-          {sortedMessages.map((message) => {
-            const isCurrentUser = message.sender === user?.id;
+      <div className="h-screen flex flex-col">
+        <main className="flex-1 min-h-0 flex overflow-y-auto flex-col gap-2 p-4 justify-end">
+          {messages.map((message) => {
+            const isCurrentUser = message.senderId === user?.id;
 
             return (
               <div
@@ -91,7 +97,8 @@ export default function CurrentChat() {
             );
           })}
         </main>
-        <footer className=" w-full flex justify-center items-center gap-2 border-t p-2 absolute bottom-0">
+
+        <footer className=" w-full flex justify-center items-center gap-2 border-t p-2 ">
           <MessageInput onSend={handleSendMessage} />
         </footer>
         <div ref={scrollRef} />

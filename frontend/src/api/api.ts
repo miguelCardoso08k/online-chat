@@ -17,20 +17,20 @@ export const Conversation = {
       },
     });
 
-    console.log(response);
-
     return await response.json();
   },
 
   async getById(id: string, jwt: string) {
+    console.log(id);
     const response = await fetch(`${this.baseUrl}/${id}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
+    const data = await response.json();
 
-    return await response.json();
+    return data;
   },
 };
 

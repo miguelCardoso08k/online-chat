@@ -37,6 +37,7 @@ export default function LoginForm() {
     setUser(user);
 
     Cookie.set("token", token, { expires: 1, secure: true });
+    Cookie.set("user", user.id, { expires: 1, secure: true });
 
     navigate("/chat");
   };

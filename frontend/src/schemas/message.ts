@@ -12,7 +12,7 @@ export const MessageSchema = z.object({
   content: z.string(),
   mediaUrl: z.string().nullable(),
   type: MessageTypeEnumSchema,
-  sender: z.string(),
+  senderId: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
