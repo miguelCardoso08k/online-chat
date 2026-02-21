@@ -3,7 +3,11 @@ import { UserRepository } from "../repository/user";
 import bcrypt from "bcryptjs";
 import { formatDate } from "../utils/formtDate";
 import { UserLoginInput } from "../schemas/user";
-import { ConflictError } from "../errors/errors";
+import {
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError,
+} from "../errors/errors";
 
 export const UserServices = {
   async create(data: CreateUserInput) {
@@ -28,18 +32,13 @@ export const UserServices = {
 
     const user = await this.getByEmail(email);
 
-    if (!user) {
-      console.log("User not found");
-      return null;
-    }
+    if (!user) throw new UnauthorizedError("Invalid credentials");
+
     if (!user.password) return null;
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (!passwordMatch) {
-      console.log("Password invalid");
-      return null;
-    }
+    if (!passwordMatch) throw new UnauthorizedError("Invalid credentials");
     const { id, name, avatarUrl, createdAt } = user;
 
     return { id, name, email, avatarUrl, createdAt: formatDate(createdAt) };
@@ -52,7 +51,7 @@ export const UserServices = {
   async getById(id: string) {
     const user = await UserRepository.findById(id);
 
-    if (!user) return null;
+    if (!user) throw new NotFoundError("User not found");
 
     const { name, email, avatarUrl, createdAt } = user;
 
@@ -66,7 +65,7 @@ export const UserServices = {
   async updatePassword(id: string, value: string) {
     const userExists = await this.getById(id);
 
-    if (!userExists) return null;
+    if (!userExists) throw new NotFoundError("User not found");
 
     const password = await bcrypt.hash(value, 10);
 
@@ -80,7 +79,7 @@ export const UserServices = {
   async delete(id: string) {
     const userExists = await this.getById(id);
 
-    if (!userExists) return null;
+    if (!userExists) throw new NotFoundError("User not found");
 
     return await UserRepository.delete(id);
   },

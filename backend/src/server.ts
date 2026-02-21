@@ -16,7 +16,7 @@ import { messageRoutes } from "./routes/message";
 import { Server as IOServer } from "socket.io";
 import { RegisterSocketEvents } from "./sockets";
 import { AppError } from "./errors/appError";
-import { ZodError } from "zod";
+
 
 const server = Fastify({
   // logger: true,

@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum ParticipantRole {
+  OWNER
+  ADMIN
+  USER
+}
+
+enum MessageType {
+  TEXT
+  AUDIO
+  IMAGE
+  VIDEO
+}
+
+enum FriendStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  BLOCKED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String? // opcional para login via OAuth
+  name      String
+  avatarUrl String?
+  createdAt DateTime @default(now())
+
+  participants     ConversationParticipant[]
+  messages         Message[]
+  sentRequests     Friend[]                  @relation("Requesters")
+  receivedRequests Friend[]                  @relation("Receivers")
+}
+
+model Friend {
+  id          String       @id @default(cuid())
+  requesterId String
+  receiverId  String
+  status      FriendStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  requester User @relation("Requesters", fields: [requesterId], references: [id])
+  receiver  User @relation("Receivers", fields: [receiverId], references: [id])
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  title     String? // título opcional para grupos
+  isGroup   Boolean  @default(false)
+  imageUrl  String?
+  createdAt DateTime @default(now())
+
+  participants ConversationParticipant[]
+  messages     Message[]
+}
+
+model ConversationParticipant {
+  id             String          @id @default(cuid())
+  userId         String
+  conversationId String
+  role           ParticipantRole @default(USER)
+  joinedAt       DateTime        @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, conversationId]) // evita duplicidade
+}
+
+model Message {
+  id             String      @id @default(cuid())
+  content        String?
+  mediaUrl       String?
+  type           MessageType
+  senderId       String
+  conversationId String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
