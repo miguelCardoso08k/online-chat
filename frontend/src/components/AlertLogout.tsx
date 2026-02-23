@@ -8,7 +8,7 @@ import {
   AlertDialogAction,
 } from "./ui/alert-dialog";
 import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
-import { User } from "@/api/api";
+import { User } from "@/api/user";
 import { useAlertLogout } from "@/hooks/useContext";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router";
@@ -18,12 +18,17 @@ export default function AlertLogout() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    const jwt = Cookies.get("token")!;
-    const res = await User.logout(jwt);
-    console.log(res);
-    if (res.ok) {
+    try {
+      await User.logout();
+
       Cookies.remove("token");
       navigate("/auth/signin");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Logout failed:", error.message);
+        return;
+      }
+      console.error("Logout failed:", error);
     }
   };
 

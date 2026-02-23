@@ -13,9 +13,10 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Link, useNavigate } from "react-router";
 import { useState } from "react";
-import { User } from "@/api/api";
+import { User } from "@/api/user";
 import Cookie from "js-cookie";
 import { useUserContext } from "@/hooks/useContext";
+import ApiError from "@/api/request";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -30,18 +31,31 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data: UserLoginInput) => {
-    setError("");
-    const res = await User.login(data);
-    const { token, user } = res as UserLoginResponse;
+    try {
+      const res = await User.login(data);
 
-    setUser(user);
+      const { token, user } = res as UserLoginResponse;
 
-    Cookie.set("token", token, { expires: 1, secure: true });
-    Cookie.set("user", user.id, { expires: 1, secure: true });
+      setUser(user);
 
-    navigate("/chat");
+      Cookie.set("token", token, { expires: 1, secure: true });
+      Cookie.set("user", user.id, { expires: 1, secure: true });
+
+      navigate("/chat");
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.status === 401) {
+          setError(
+            "Credenciais inválidas. Por favor, verifique seu email e senha.",
+          );
+          return;
+        }
+        setError(
+          "Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.",
+        );
+      }
+    }
   };
-
   return (
     <>
       <Form {...form}>

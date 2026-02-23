@@ -18,6 +18,7 @@ export default function CurrentChat() {
   const safeId = id!;
   const scrollRef = useRef<HTMLDivElement>(null);
   const socket = getSocket();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleSendMessage = (message: string) => {
     socket.emit("send_message", {
@@ -56,6 +57,11 @@ export default function CurrentChat() {
         },
       );
     });
+    const el = containerRef.current;
+    if (el) {
+      console.log("oi");
+      el.scrollTop = el.scrollHeight;
+    }
   }, [jwt, socket, queryClient, safeId]);
 
   if (isLoading) return <span>Carregando...</span>;
@@ -66,9 +72,12 @@ export default function CurrentChat() {
     const messages: Message[] = conversation.messages;
 
     return (
-      <div className="h-screen flex flex-col">
-        <main className="flex-1 min-h-0 flex overflow-y-auto flex-col gap-2 p-4 justify-end">
-          {messages.map((message) => {
+      <div className="h-screen flex flex-col bg-zinc-800">
+        <main
+          ref={containerRef}
+          className="flex-1 overflow-y-auto p-4 flex flex-col gap-2"
+        >
+          {messages.map((message) => {  
             const isCurrentUser = message.senderId === user?.id;
 
             return (
@@ -96,12 +105,12 @@ export default function CurrentChat() {
               </div>
             );
           })}
+          <div ref={scrollRef} />
         </main>
 
-        <footer className=" w-full flex justify-center items-center gap-2 border-t p-2 ">
+        <footer className="h-20 border-t flex items-center justify-center px-4 ">
           <MessageInput onSend={handleSendMessage} />
         </footer>
-        <div ref={scrollRef} />
       </div>
     );
   }

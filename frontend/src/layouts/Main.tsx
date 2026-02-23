@@ -1,4 +1,4 @@
-import { User } from "@/api/api";
+import { User } from "@/api/user";
 import AlertLogout from "@/components/AlertLogout";
 import AppSidebar from "@/components/AppSidebar";
 import Header from "@/components/Header";
@@ -25,6 +25,7 @@ export default function MainLayout() {
   });
 
   useEffect(() => {
+    console.log(token );
     if (!token) {
       navigate("/auth/signin", { replace: true });
     }
@@ -38,20 +39,21 @@ export default function MainLayout() {
     const socket = getSocket();
     socket.connect();
   }
-
   return (
     token && (
       <ConversationProvider>
         <AlertLogoutProvider>
           <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-              <Header />
-              <main className="flex-1 min-h-0 bg-zinc-800">
-                <Outlet />
+            <div className="flex h-screen w-full">
+              <AppSidebar />
+              <SidebarInset className="flex flex-col flex-1 min-h-0">
+                <Header />
+                <main className="flex-1 min-h-0">
+                  <Outlet />
+                </main>
                 <AlertLogout />
-              </main>
-            </SidebarInset>
+              </SidebarInset>
+            </div>
           </SidebarProvider>
         </AlertLogoutProvider>
       </ConversationProvider>

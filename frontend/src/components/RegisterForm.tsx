@@ -17,7 +17,7 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useState } from "react";
-import { User } from "@/api/api";
+import { User } from "@/api/user";
 import Cookie from "js-cookie";
 import { Link, useNavigate } from "react-router";
 
