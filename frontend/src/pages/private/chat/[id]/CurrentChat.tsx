@@ -1,16 +1,14 @@
-import { Conversation } from "@/api/api";
+import { Conversation } from "@/api/conversation";
 import MessageInput from "@/components/MessageInput";
 import { useMainLayout, useUserContext } from "@/hooks/useContext";
 import { getSocket } from "@/lib/socket";
 import { ConversationDetailResponse } from "@/schemas/conversation";
 import { Message } from "@/schemas/message";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Cookies from "js-cookie";
 import { useEffect, useRef } from "react";
 import { useParams } from "react-router";
 
 export default function CurrentChat() {
-  const jwt = Cookies.get("token");
   const queryClient = useQueryClient();
   const { user } = useUserContext();
   const { id } = useParams();
@@ -30,12 +28,15 @@ export default function CurrentChat() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["conversation", safeId],
-    queryFn: () => Conversation.getById(safeId, jwt!),
+    queryFn: () => Conversation.getById(safeId),
   });
 
   useEffect(() => {
+    if (data) {
+      setTitle(data.conversation.title || "Chat");
+    }
     socket.on("received_message", (newMessage: Message) => {
-      console.log("here");
+      console.log(user?.id);
       console.log(newMessage);
       queryClient.setQueryData<ConversationDetailResponse>(
         ["conversation", safeId],
@@ -62,13 +63,12 @@ export default function CurrentChat() {
       console.log("oi");
       el.scrollTop = el.scrollHeight;
     }
-  }, [jwt, socket, queryClient, safeId]);
+  }, [setTitle, data, socket, queryClient, safeId, user]);
 
   if (isLoading) return <span>Carregando...</span>;
 
   if (data) {
-    const { conversation } = data as ConversationDetailResponse;
-    setTitle(conversation.title || "chat");
+    const { conversation } = data;
     const messages: Message[] = conversation.messages;
 
     return (
@@ -77,7 +77,7 @@ export default function CurrentChat() {
           ref={containerRef}
           className="flex-1 overflow-y-auto p-4 flex flex-col gap-2"
         >
-          {messages.map((message) => {  
+          {messages.map((message) => {
             const isCurrentUser = message.senderId === user?.id;
 
             return (
@@ -108,8 +108,10 @@ export default function CurrentChat() {
           <div ref={scrollRef} />
         </main>
 
-        <footer className="h-20 border-t flex items-center justify-center px-4 ">
-          <MessageInput onSend={handleSendMessage} />
+        <footer className="h-23 w-full flex border-t relative">
+          <div className="absolute top-2 flex justify-evenly w-full">
+            <MessageInput onSend={handleSendMessage} />
+          </div>
         </footer>
       </div>
     );

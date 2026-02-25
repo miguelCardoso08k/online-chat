@@ -1,24 +1,21 @@
+import {
+  ConversationsResponse,
+  ConversationDetailResponse,
+} from "@/schemas/conversation";
 import { apiRequest } from "./request";
 
 export const Conversation = {
   baseUrl: "conversation",
 
-   get() {
-   return apiRequest(this.baseUrl, {
+  get() {
+    return apiRequest<ConversationsResponse>(this.baseUrl, {
       method: "GET",
     });
   },
 
-  async getById(id: string, jwt: string) {
-    console.log(id);
-    const response = await fetch(`${this.baseUrl}/${id}`, {
+  getById(id: string) {
+    return apiRequest<ConversationDetailResponse>(`${this.baseUrl}/${id}`, {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
     });
-    const data = await response.json();
-
-    return data;
   },
 };

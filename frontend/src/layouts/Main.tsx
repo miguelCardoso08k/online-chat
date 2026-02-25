@@ -20,12 +20,11 @@ export default function MainLayout() {
   const token = Cookies.get("token");
   const { data } = useQuery({
     queryKey: ["user"],
-    queryFn: () => User.get(token!),
+    queryFn: () => User.get(),
     enabled: !user,
   });
 
   useEffect(() => {
-    console.log(token );
     if (!token) {
       navigate("/auth/signin", { replace: true });
     }

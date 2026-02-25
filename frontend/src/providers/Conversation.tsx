@@ -1,8 +1,8 @@
-import { Conversation } from "@/api/api";
+import { Conversation } from "@/api/conversation";
 import { ConversationContext } from "@/context/Conversation";
 import { Conversation as ConversationType } from "@/schemas/conversation";
 import { useQuery } from "@tanstack/react-query";
-import Cookies from "js-cookie";
+
 import { ReactNode } from "react";
 
 export default function ConversationProvider({
@@ -10,12 +10,11 @@ export default function ConversationProvider({
 }: {
   children: ReactNode;
 }) {
-  const jwt = Cookies.get("token");
-
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["Conversations"],
-    queryFn: async () => await Conversation.get(jwt!),
+    queryFn: async () => await Conversation.get(),
   });
+  
 
   const conversations: ConversationType[] = data?.conversations ?? [];
 

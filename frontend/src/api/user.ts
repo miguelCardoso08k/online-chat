@@ -1,5 +1,6 @@
 import {
   UserLoginInput,
+  UserMeREsponse,
   UserRegisterInput,
   UserUpdatePasswordInput,
 } from "@/schemas/user";
@@ -27,18 +28,14 @@ export const User = {
 
   logout() {
     return apiRequest("logout", {
-      method: "POST"})
+      method: "POST",
+    });
   },
 
-  async get(jwt: string) {
-    const response = await fetch(`user/me`, {
+  async get() {
+    return apiRequest<UserMeREsponse>("user/me", {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
     });
-
-    return await response.json();
   },
 
   async updatePassword(data: UserUpdatePasswordInput) {

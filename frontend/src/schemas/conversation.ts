@@ -45,10 +45,15 @@ export const ConversationSchema = z.object({
   ),
 });
 
+export const ConversationsResponseSchema = z.object({
+  message: z.string(),
+  conversations: z.array(ConversationSchema),
+});
+
 export type ConversationDetailResponse = z.infer<
   typeof ConversationDetailResponseSchema
 >;
 export type ConversationDetail = z.infer<typeof ConversationDetailSchema>;
-
+export type ConversationsResponse = z.infer<typeof ConversationsResponseSchema>;
 export type Conversation = z.infer<typeof ConversationSchema>;
 export type UserRole = z.infer<typeof RoleSchema>;

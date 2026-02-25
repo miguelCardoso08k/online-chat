@@ -10,7 +10,7 @@ let socket: SocketIOClient.Socket | null = null;
 
 const userId = Cookies.get("user");
 const token = Cookies.get("token");
-console.log(userId);
+
 export const getSocket = () => {
   if (!socket) {
     socket = io(URL, {

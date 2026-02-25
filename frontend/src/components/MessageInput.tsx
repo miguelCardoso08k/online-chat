@@ -37,10 +37,11 @@ export default function ChatInput({
         onKeyDown={handleKeyDown}
         placeholder="Digite sua mensagem..."
         className="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent
-        w-full max-h-32 min-h-11 resize-none overflow-y-auto rounded-md border bg-white p-2 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary dark:bg-zinc-900 dark:text-white"
+        w-4/5 max-h-32 min-h-11 resize-none overflow-y-auto rounded-md border bg-white p-2 shadow-sm focus:outline-none focus:ring-1 focus:ring-primary dark:bg-zinc-900 dark:text-white"
         rows={1}
       />
       <Button
+        className="w-1/12"
         size="icon"
         onClick={() => {
           if (message.trim()) {
